@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { PlusCircleIcon } from "lucide-react";
 import { siGithub } from "simple-icons";
 
 import { AppSidebar } from "@/app/(main)/dashboard/_components/sidebar/app-sidebar";
@@ -10,16 +12,21 @@ import { SimpleIcon } from "@/components/simple-icon";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { users } from "@/data/users";
+import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { getPreference } from "@/server/server-actions";
 
-import { AccountSwitcher } from "./_components/sidebar/account-switcher";
 import { LayoutControls } from "./_components/sidebar/layout-controls";
 import { SearchDialog } from "./_components/sidebar/search-dialog";
 import { ThemeSwitcher } from "./_components/sidebar/theme-switcher";
+import { UserMenu } from "./_components/sidebar/user-menu";
 
 export default async function Layout({ children }: Readonly<{ children: ReactNode }>) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/auth/v2/login");
+  }
+
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
   const [variant, collapsible] = await Promise.all([
@@ -36,7 +43,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant={variant} collapsible={collapsible} />
+      <AppSidebar user={user} variant={variant} collapsible={collapsible} />
       <SidebarInset
         className={cn(
           "[html[data-content-layout=centered]_&>*]:mx-auto",
@@ -50,7 +57,6 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
         <header
           className={cn(
             "flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
-            // Handle sticky navbar style with conditional classes so blur, background, z-index, and rounded corners remain consistent across all SidebarVariant layouts.
             "[html[data-navbar-style=sticky]_&]:sticky [html[data-navbar-style=sticky]_&]:top-0 [html[data-navbar-style=sticky]_&]:z-50 [html[data-navbar-style=sticky]_&]:overflow-hidden [html[data-navbar-style=sticky]_&]:rounded-t-[inherit] [html[data-navbar-style=sticky]_&]:bg-background/50 [html[data-navbar-style=sticky]_&]:backdrop-blur-md",
           )}
         >
@@ -59,11 +65,13 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
               <SidebarTrigger className="-ml-1" />
               <Separator
                 orientation="vertical"
-                className="mx-2 data-[orientation=vertical]:h-4 data-[orientation=vertical]:self-center"
+                className="hidden data-[orientation=vertical]:h-4 data-[orientation=vertical]:self-center md:mx-2 md:block"
               />
-              <SearchDialog />
+              <span className="hidden md:inline-flex">
+                <SearchDialog />
+              </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 md:flex">
               <LayoutControls />
               <ThemeSwitcher />
               <Button asChild size="icon">
@@ -77,8 +85,14 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
                   <SimpleIcon icon={siGithub} className="fill-primary-foreground" />
                 </Link>
               </Button>
-              <AccountSwitcher users={users} />
+              <UserMenu user={user} />
             </div>
+            <Button asChild size="sm" className="md:hidden">
+              <Link prefetch={false} href="/dashboard/projects/new">
+                <PlusCircleIcon className="mr-1 size-4" />
+                Create Project
+              </Link>
+            </Button>
           </div>
         </header>
         {/* Pages can set data-content-padding="false" to render full-bleed app layouts. */}

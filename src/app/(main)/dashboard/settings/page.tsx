@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/auth";
 
-import { ThemeToggleSection } from "./_components/theme-toggle-section";
+import { AppearanceSettings } from "./_components/appearance-settings";
 
 export default async function SettingsPage() {
   const session = await auth.api.getSession({
@@ -24,8 +24,8 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Appearance</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <ThemeToggleSection />
+        <CardContent>
+          <AppearanceSettings />
         </CardContent>
       </Card>
 
