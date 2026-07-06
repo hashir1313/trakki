@@ -44,7 +44,7 @@ export function UserMenu({ user }: UserMenuProps) {
         >
           <Avatar className="size-8 rounded-lg">
             <AvatarImage src={user.image ?? undefined} alt={displayName} />
-            <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">{initials}</AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
