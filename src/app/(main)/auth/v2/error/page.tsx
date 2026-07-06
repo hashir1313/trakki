@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Home } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +28,7 @@ export default function AuthErrorPage() {
   const errorInfo = ERROR_MESSAGES[error] ?? ERROR_MESSAGES.default;
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-6 py-16 text-center">
+    <div className="flex flex-col items-center space-y-6 text-center">
       <div className="flex size-16 items-center justify-center rounded-full bg-destructive/10">
         <AlertTriangle className="size-8 text-destructive" />
       </div>
@@ -38,10 +38,16 @@ export default function AuthErrorPage() {
       </div>
       <div className="flex gap-3">
         <Button asChild variant="outline">
-          <Link href="/">Go Home</Link>
+          <Link href="/">
+            <Home className="mr-2 size-4" />
+            Go Home
+          </Link>
         </Button>
         <Button asChild>
-          <Link href="/auth/v2/login">Try Again</Link>
+          <Link href="/auth/v2/login">
+            <ArrowLeft className="mr-2 size-4" />
+            Try Again
+          </Link>
         </Button>
       </div>
     </div>
