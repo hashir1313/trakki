@@ -18,7 +18,6 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronLeft, ChevronRight, Eye, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,6 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { DeleteProjectDialog } from "./delete-project-dialog";
+import { ProjectStatusToggle } from "./project-status-toggle";
 
 interface Project {
   id: string;
@@ -43,13 +43,6 @@ interface Project {
   updatedAt: string;
 }
 
-const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  active: "default",
-  draft: "secondary",
-  completed: "outline",
-  paused: "destructive",
-};
-
 export function ProjectsTable({ initialProjects }: { initialProjects: Project[] }) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -59,6 +52,11 @@ export function ProjectsTable({ initialProjects }: { initialProjects: Project[] 
 
   const columns: ColumnDef<Project>[] = [
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <ProjectStatusToggle projectId={row.original.id} status={row.getValue("status")} />,
+    },
+    {
       accessorKey: "name",
       header: ({ column }) => (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -67,13 +65,6 @@ export function ProjectsTable({ initialProjects }: { initialProjects: Project[] 
         </Button>
       ),
       cell: ({ row }) => <span className="font-medium">{row.getValue("name")}</span>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <Badge variant={statusVariant[row.getValue("status") as string] ?? "secondary"}>{row.getValue("status")}</Badge>
-      ),
     },
     {
       accessorKey: "clientName",
