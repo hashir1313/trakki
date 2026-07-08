@@ -96,7 +96,7 @@ export function BrandingSettings({ logoUrl: initialLogoUrl, brandColor: initialB
             <div className="flex items-center gap-3">
               <div className="flex size-12 items-center justify-center overflow-hidden rounded-lg border bg-muted">
                 {/* biome-ignore lint/performance/noImgElement: user-uploaded logo */}
-                <img src={logoUrl} alt="Logo" className="size-full object-contain" />
+                <img src={logoUrl} alt="Logo" className="size-full object-cover" />
               </div>
               <Button variant="ghost" size="icon-sm" onClick={handleLogoDelete} aria-label="Remove logo">
                 <Trash2 className="text-muted-foreground" />
